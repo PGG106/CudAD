@@ -16,8 +16,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "archs/Berserk.h"
+#include "archs/Alexandria.h"
+#include "dataset/shuffle.h"
+#include "dataset/writer.h"
 #include "misc/config.h"
+#include "quantitize.h"
 #include "trainer.h"
 
 #include <iostream>
@@ -28,16 +31,58 @@ using namespace std;
 int main() {
     init();
 
-    const string data_path = "E:/berserk/training-data/n5k/";
-    const string output    = "./resources/runs/testing/";
+    const string data_path = "D:\\giuseppe\\CudAD\\training_data\\";
+    const string output    = "D:\\giuseppe\\CudAD\\output\\";
 
+    /********
+        convert fen to bin
+        *********/
+
+    const string bin_out = "D:\\giuseppe\\CudAD\\training_data\\";
+
+    for (int i = 1; i < 2; i++) {
+        std::string filename = data_path + "data" + to_string(i) + ".txt";
+        std::cout << filename;
+        DataSet ds = read<TEXT>(filename);
+        write(bin_out + "data" + to_string(i) + ".bin", ds);
+    }
+
+    /********
+        Shuffle data
+        *********/
+    /*
+         const string bin_out = "D:\\giuseppe\\CudAD\\training_data\\";
+         vector<string> files{};
+
+
+         for (int i = 1; i <= 2; i++)
+          {
+             files.push_back(bin_out + "data" + to_string(i) + ".bin");
+          }
+          mix_and_shuffle_2(files, "shuffled_$.bin", 2);
+
+    */
+    std::cout << "AAAAAAAAAAAAAAAAAAAAAA";
+    /*
     // Load files
     vector<string> files {};
-    for (int i = 0; i < 20; i++)
-        files.push_back(data_path + "n5k." + to_string(i) + ".bin");
+    for (int i = 1; i <= 2; i++)
+        files.push_back(data_path + "shuffled_" + to_string(i) + ".bin");
 
-    Trainer<Berserk> trainer {};
-    trainer.fit(files, vector<string> {data_path + "validation.bin"}, output);
+    Trainer<Alexandria> trainer {};
+    trainer.fit(files, vector<string> {data_path + "\\validation\\data1.bin"}, output);
+
+    auto    layers = Alexandria::get_layers();
+
+    Network network {layers};
+    network.loadWeights(output + "weights-epoch300.nnue");
+
+    BatchLoader batch_loader {files, 16384};
+    batch_loader.start();
+
+    // computeScalars<Alexandria>(batch_loader, network, 1024, Alexandria::Inputs);
+    quantitize_shallow(output + "relative.net", network, 64, 256);
 
     close();
+    */
 }

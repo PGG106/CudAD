@@ -52,3 +52,6 @@ cmake-build-debug/
 bin/
 resources/
 .vscode
+training_data/*.bin
+training_data/*.txt
+training_data/validation/*

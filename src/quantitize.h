@@ -24,11 +24,11 @@
 #include "position/position.h"
 
 #include <string>
+#include  <iomanip>
 
 template<class Arch>
 void test_fen(Network& network, const std::string& fen) {
-
-    SparseInput   sp1 {Arch::Inputs, 1, 32};
+  SparseInput   sp1 {Arch::Inputs, 1, 32};
     SparseInput   sp2 {Arch::Inputs, 1, 32};
 
     Position      p = parseFen(fen);
@@ -42,21 +42,10 @@ void test_fen(Network& network, const std::string& fen) {
     sp1.column_indices.gpu_upload();
     sp2.column_indices.gpu_upload();
 
-//    std::cout << sp1 << std::endl;
-//    std::cout << sp2 << std::endl;
-
     network.feed(std::vector<SparseInput*> {&sp1, &sp2});
     network.getOutput().values.gpu_download();
-
-    network.getOutput(0).values.gpu_download();
-    network.getOutput(1).values.gpu_download();
-
-    //    std::cout << sp1 << " " << sp2 << std::endl;
-    std::cout << network.getOutput(0).values << std::endl;
-    std::cout << network.getOutput(1).values << std::endl;
-
     std::cout << "testing fen: " << fen << std::endl;
-    std::cout << "eval: " << network.getOutput().values << std::endl;
+    std::cout << "eval: " << std::setprecision(8) << (float)network.getOutput().values(0) << std::endl;
 }
 
 template<typename type>
